@@ -8,8 +8,19 @@ dotenv.config();
 const app = express();
 const PORT = 5000;
 
-app.use(cors({
-    origin: 'http://localhost:5173',
+const allowedOrigins = [
+    'http://localhost:5173',
+    'https://comfy-haupia-0e64e6.netlify.app'
+  ];
+  
+  app.use(cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type']
   }));
