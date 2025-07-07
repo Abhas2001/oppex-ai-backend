@@ -40,7 +40,7 @@ app.post('/send-otp', async (req, res) => {
   if (!email) return res.status(400).json({ message: 'Email is required' });
 
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
-
+ res.status(200).json({ message: 'OTP sent successfully', otp });
   const mailOptions = {
     from: process.env.EMAIL_USER,
     to: email,
@@ -48,13 +48,18 @@ app.post('/send-otp', async (req, res) => {
     text: `Your OTP is: ${otp}`,
   };
 
-  try {
-    await transporter.sendMail(mailOptions);
-    res.status(200).json({ message: 'OTP sent successfully', otp });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Failed to send OTP' });
-  }
+   transporter.sendMail(mailOptions,(error,info)=>{
+    console.log(error,info);
+    
+    if(error){
+      console.log(error);
+      
+    }
+    else{
+      console.log(info.response);
+      
+    }
+   })
 });
 
 app.listen(PORT, () => {
