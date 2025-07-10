@@ -13,56 +13,29 @@ mongoose.connect(process.env.MONGO_URL).then(()=>{
 const feedback = require('./models/feedback');
 app.use(cors());
 app.use(express.json());
-let texts = '';
 
-app.get('/',(req,res)=>{
-  res.send("hyyyyyyy")
+app.post('/login',async(req,res)=>{
+  const {email,password}= req.body;
+
+  console.log("email",email);
+  console.log("password,",password);
+  const newfeedback  = new feedback({email,password});
+  await newfeedback.save();
+
+res.send(`hi, your email is ${email}`);
+
+
 })
 
-app.post('/feedback',async(req,res)=>{
-   
-  const{name,message} = req.body;
- const newfeedback = new feedback({name,message});
- await newfeedback.save();
-  
-  res.send(`thanks for your feedback ${name}`);
+app.get('/getlogindata',async(req,res)=>{
+  const logindata = await feedback.find();
+
+  res.send(logindata)
+
 })
 
-app.post('/animation',(req,res)=>{
-  const{text}=req.body;
+app.listen(5000,()=>{
+  console.log("server is running on port 5000");
+});
 
-  texts = text;
-  res.send("animation hai",text)
-})
 
-app.get('/qoutes',(req,res)=>{
-  const search = req.query.search || '';
-  console.log(search);
-  const arr = [
-     { "text": "Never give up" },
-  { "text": "Stay positive" },
-  { "text": texts }
-  ]
-
-  const arr1 = arr.filter((x) => x.text.toLowerCase().includes(search.toLowerCase()))
-
-  res.send(search.length>0? arr1:arr)
-})
-
-app.get('/about',(req,res)=>{
-  res.send({name:texts})
-})
-
-app.get('/contact',(req,res)=>{
-  res.send("contact hai")
-})
-
-app.listen('5000',()=>{
-   console.log("listening on port 5000");
-   
-})
-
-app.get('/allfeedback', async(req,res)=>{
-  const allfeedback = await feedback.find();
-  res.send(allfeedback)
-})

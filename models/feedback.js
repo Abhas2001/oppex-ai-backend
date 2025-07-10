@@ -3,8 +3,8 @@ const mongoose = require('mongoose');
 
 const feedbackschema = new mongoose.Schema({
 
-name: String,
-message: String,
+email: String,
+password: String,
 })
 
 
